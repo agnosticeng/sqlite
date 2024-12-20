@@ -1,0 +1,29 @@
+{
+  "name": "sqlite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2",
+    "jsdom": "^25.0.1",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3"
+  },
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "^3.47.2-build1"
+  },
+  "main": "./dist/sqlite.umd.cjs",
+  "module": "./dist/sqlite.js",
+  "exports": {
+    ".": {
+      "import": "./dist/sqlite.js",
+      "require": "./dist/sqlite.cjs"
+    }
+  }
+}
