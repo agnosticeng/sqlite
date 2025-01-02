@@ -1,11 +1,16 @@
 {
-  "name": "sqlite",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@agnosticeng/sqlite",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agnosticeng/sqlite.git"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && tsc",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -19,6 +24,7 @@
     "@sqlite.org/sqlite-wasm": "^3.47.2-build1"
   },
   "main": "./dist/sqlite.umd.cjs",
+  "types": "./dist/sqlite.d.ts",
   "module": "./dist/sqlite.js",
   "exports": {
     ".": {
