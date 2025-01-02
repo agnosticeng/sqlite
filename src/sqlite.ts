@@ -1,5 +1,5 @@
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
-import type { Database, Sqlite3Static } from "@sqlite.org/sqlite-wasm";
+import type { BindingSpec, Database, FlexibleString, Sqlite3Static, SqlValue } from "@sqlite.org/sqlite-wasm";
 
 export class SQLite {
   private db: Database | undefined;
@@ -19,10 +19,11 @@ export class SQLite {
     this.db = new this.sqlite3.oo1.DB(":memory:");
   }
 
-  async exec(query: string): Promise<any[]> {
+
+  async exec(query: FlexibleString, bind?: BindingSpec): Promise<{ [columnName: string]: SqlValue }[]> {
     await this.initPromise;
     if (!this.db) return [];
-    return this.db.exec({ sql: query, returnValue: "resultRows" });
+    return this.db.exec(query, { bind, rowMode: 'object', returnValue: 'resultRows' });
   }
 
   async export_db(): Promise<Uint8Array> {
