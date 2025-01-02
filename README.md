@@ -43,6 +43,12 @@ async function example() {
     ('Jane Smith', 25)
   `);
 
+  // Or use binding
+  await db.exec(`
+    INSERT INTO users (name, age) VALUES
+    ($1, $2)
+  `, ['Johnny Appleseed', 70])
+
   // Query data
   const results = await db.exec('SELECT * FROM users');
   console.log(results);
