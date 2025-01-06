@@ -2,6 +2,21 @@ import { describe, it, expect, vi } from "vitest";
 import { SQLite } from "./sqlite";
 
 describe("SQLite database operations", () => {
+  it("should test unsubscribe functionality", async () => {
+    const db = new SQLite();
+
+    const execCallback = vi.fn();
+    const unsubscribe = db.on("exec", execCallback);
+
+    await db.exec(`SELECT 1`);
+    expect(execCallback).toHaveBeenCalledTimes(1);
+
+    unsubscribe();
+
+    await db.exec(`SELECT 2`);
+    expect(execCallback).toHaveBeenCalledTimes(1);
+  });
+
   it("should perform database operations and verify exports match", async () => {
     const db = new SQLite();
 
