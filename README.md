@@ -13,7 +13,7 @@ A lightweight TypeScript wrapper for SQLite WebAssembly, providing a simple inte
 ## Installation
 
 ```bash
-npm install @agnosticeng/sqlite-wasm-wrapper
+npm install @agnosticeng/sqlite
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ npm install @agnosticeng/sqlite-wasm-wrapper
 ### Basic Usage
 
 ```typescript
-import { SQLite } from '@agnosticeng/sqlite-wasm-wrapper';
+import { SQLite } from '@agnosticeng/sqlite';
 
 const db = new SQLite();
 
