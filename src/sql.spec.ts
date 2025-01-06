@@ -1,15 +1,21 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { SQLite } from "./sqlite";
 
 describe("SQLite database operations", () => {
   it("should perform database operations and verify exports match", async () => {
     const db = new SQLite();
+
+    const execCallback = vi.fn();
+    db.on("exec", execCallback);
+
     await db.exec(`
       CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);
       INSERT INTO users (name) VALUES ('Alice'), ('Bob');
     `);
 
     const result = await db.exec(`SELECT * FROM users;`);
+
+    expect(execCallback).toHaveBeenCalledTimes(2);
     expect(result).toBeDefined();
 
     const exportedBytes = await db.export_db();

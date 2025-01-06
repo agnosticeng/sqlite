@@ -1,10 +1,23 @@
 import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
-import type { BindingSpec, Database, FlexibleString, Sqlite3Static, SqlValue } from "@sqlite.org/sqlite-wasm";
+import type {
+  BindingSpec,
+  Database,
+  FlexibleString,
+  Sqlite3Static,
+  SqlValue,
+} from "@sqlite.org/sqlite-wasm";
+
+type Args = any[];
+type Result = any;
+type Callback = (args: Args, result: Result) => void;
 
 export class SQLite {
   private db: Database | undefined;
   private sqlite3: Sqlite3Static | undefined;
   private initPromise: Promise<void>;
+  private callbacks: {
+    [key: string]: Callback[];
+  } = {};
 
   constructor() {
     this.initPromise = this.initialize();
@@ -19,11 +32,35 @@ export class SQLite {
     this.db = new this.sqlite3.oo1.DB(":memory:");
   }
 
-
-  async exec(query: FlexibleString, bind?: BindingSpec): Promise<{ [columnName: string]: SqlValue }[]> {
+  async exec(
+    query: FlexibleString,
+    bind?: BindingSpec,
+  ): Promise<{ [columnName: string]: SqlValue }[]> {
     await this.initPromise;
     if (!this.db) return [];
-    return this.db.exec(query, { bind, rowMode: 'object', returnValue: 'resultRows' });
+    const result = this.db.exec(query, {
+      bind,
+      rowMode: "object",
+      returnValue: "resultRows",
+    });
+
+    this.call("exec", [query, bind], result);
+
+    return result;
+  }
+
+  private call(event: string, args: Args, result: Result): void {
+    if (!this.callbacks[event]) return;
+    queueMicrotask(() => {
+      for (const callback of this.callbacks[event]) {
+        callback(args, result);
+      }
+    });
+  }
+
+  on(event: "exec", callback: (args: Args) => void): void {
+    if (!this.callbacks[event]) this.callbacks[event] = [];
+    this.callbacks[event].push(callback);
   }
 
   async export_db(): Promise<Uint8Array> {
