@@ -15,7 +15,6 @@
     "test:browser": "vitest --workspace=vitest.workspace.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.2",
     "@vitest/browser": "^2.1.8",
     "jsdom": "^25.0.1",
