@@ -54,11 +54,14 @@ async function example() {
   const results = await db.exec('SELECT * FROM users');
   console.log(results);
 
-  // Add callback for exec events
-  db.on('exec', (args) => {
+  // Add callback for exec events with unsubscribe
+  const unsubscribe = db.on('exec', (args) => {
     console.log('Query executed:', args[0]);
     console.log('Bindings:', args[1]);
   });
+
+  // Later unsubscribe when done
+  unsubscribe();
 }
 ```
 
@@ -106,13 +109,14 @@ Executes an SQL query and returns the results as an array of objects.
   - `bind`: Optional binding parameters
 - **Returns:** Promise resolving to an array of row objects
 
-##### `on(event: "exec", callback: (args: any[]) => void): void`
+##### `on(event: "exec", callback: (args: any[]) => void): () => void`
 
-Subscribes to database events.
+Subscribes to database events and returns an unsubscribe function.
 
 - **Parameters:**
   - `event`: Event type ("exec")
   - `callback`: Function called when event occurs
+- **Returns:** Function that when called will unsubscribe the callback
 
 ##### `export_db(): Promise<Uint8Array>`
 

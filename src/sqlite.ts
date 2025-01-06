@@ -58,9 +58,15 @@ export class SQLite {
     });
   }
 
-  on(event: "exec", callback: (args: Args) => void): void {
+  on(event: "exec", callback: (args: Args) => void): () => void {
     if (!this.callbacks[event]) this.callbacks[event] = [];
-    this.callbacks[event].push(callback);
+    const callbacks = this.callbacks[event];
+    callbacks.push(callback);
+
+    return () => {
+      const filtered = callbacks.filter((cb) => cb !== callback);
+      this.callbacks[event] = filtered;
+    };
   }
 
   async export_db(): Promise<Uint8Array> {
