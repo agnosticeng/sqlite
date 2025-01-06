@@ -8,6 +8,7 @@ A lightweight TypeScript wrapper for SQLite WebAssembly, providing a simple inte
 - Database export and import functionality
 - Asynchronous API
 - TypeScript support
+- Event callback support
 - Zero configuration required
 
 ## Installation
@@ -46,12 +47,18 @@ async function example() {
   // Or use binding
   await db.exec(`
     INSERT INTO users (name, age) VALUES
-    ($1, $2)
+    (?, ?)
   `, ['Johnny Appleseed', 70])
 
   // Query data
   const results = await db.exec('SELECT * FROM users');
   console.log(results);
+
+  // Add callback for exec events
+  db.on('exec', (args) => {
+    console.log('Query executed:', args[0]);
+    console.log('Bindings:', args[1]);
+  });
 }
 ```
 
@@ -90,13 +97,22 @@ Creates a new SQLite instance with an in-memory database.
 
 #### Methods
 
-##### `exec(query: string): Promise<any[]>`
+##### `exec(query: FlexibleString, bind?: BindingSpec): Promise<{ [columnName: string]: SqlValue }[]>`
 
-Executes an SQL query and returns the results as an array.
+Executes an SQL query and returns the results as an array of objects.
 
 - **Parameters:**
   - `query`: SQL query string
-- **Returns:** Promise resolving to an array of results
+  - `bind`: Optional binding parameters
+- **Returns:** Promise resolving to an array of row objects
+
+##### `on(event: "exec", callback: (args: any[]) => void): void`
+
+Subscribes to database events.
+
+- **Parameters:**
+  - `event`: Event type ("exec")
+  - `callback`: Function called when event occurs
 
 ##### `export_db(): Promise<Uint8Array>`
 
